@@ -2,4 +2,4 @@
 
 
 rm -rf output
-dnfe release -olmp -d ./output
+nfe release -comp -d ./output
