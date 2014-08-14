@@ -9,7 +9,7 @@
 	<script type="text/javascript">
 	try{document.execCommand("BackgroundImageCache", false, true);}catch(e){}
 	</script>
-    <script src="../libs/sea.js"></script>
+    <script src="../libs/nfe.js"></script>
 </head>
 <body class='action'>
 <header>Header</header>
@@ -25,6 +25,7 @@ main
 /**
  * seajs配置信息
  */
+ /*
 //var seajsBase = "../dist/";
 var seajsBase = "http://127.0.0.1:8080/static/js/";
 seajs.config({
@@ -47,7 +48,14 @@ function defineCss(id, content){
 seajs.use('action/index', function(a){
     a.init();
 });
-
+*/
+nfe.setConfig({
+    base:"/static/js/",
+    preload:['jquery']
+});
+nfe.use(['action/index', 'action/index.css'], function(a){
+    a.init();
+});
 
 </script>
 </body>
