@@ -1,9 +1,11 @@
 
-    var view = require('action/view');
+    var view = require('./view');
 
-    var model = require('action/model');
+    var model = require('./model');
 
     var $ = require('jquery');
+
+    var echarts = require('echarts');
 
     //require.async('action/test.css');
 
@@ -14,6 +16,8 @@
         model.init(options);
 
         console.log($);
+
+        console.log(echarts);
     };
     exports.dispose = function(){
         console.log("alarm dispose");
