@@ -1,5 +1,6 @@
 
     var view = require('./view');
+    view = require('./view');
 
     var model = require('./model');
 

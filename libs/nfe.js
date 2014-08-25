@@ -16,19 +16,14 @@
  */
 (function(global, undefined){
 	var nfe = {};
-	nfe.version = '1.0.0';
+	nfe.version = '1.0.1';
 
     var uri = nfe.uri = {
         version:"1.0.0"
     };
 
-    var State = {
-        READY:0,
-        LOADING:1,
-        COMPLETED:2
-    };
-
     var anonymousMeta = null;
+	var delayMetas = [];
     /**
      * URI拼接
      * uri.join("/path", "/to/", "home", "../school", "./index.html")
@@ -200,19 +195,23 @@
         if(nfe.config.alias[id]){
 			id = nfe.config.alias[id];
 		}
+		if(!TYPE_REG.test(id)){
+			id += '.js';
+		}
         return id;
     }
 
 	function load(meta, callback){
         
-        var resId = getId(meta.id);
-        var url = getURI(resId);
+        //var resId = getId(meta.id);
+        //var url = getURI(resId);
+        var url = getURI(meta.uri);
 
-        if(typeof nfe.cache[meta.id] !== 'undefined'){
+        if(typeof nfe.cache[meta.uri] !== 'undefined'){
             callback.call(this, url);
             return;
         } 
-        nfe.cache[meta.id] = meta;
+        nfe.cache[meta.uri] = meta;
         debug(1, '[load] url:' + url);
 		var type = util.fileType(url),
 			isJs = type === 'js',
@@ -240,9 +239,22 @@
 					head.removeChild(node);
                     if(anonymousMeta){
                         anonymousMeta.id = meta.id;
-                        save(meta.id, anonymousMeta);
+                        save(meta.uri, anonymousMeta);
                         anonymousMeta = null;
                     }
+					if(delayMetas.length > 0){
+						var metas = [];
+						util.each(delayMetas, function(dep, idx){
+							var nid = uri.join(uri.dirname(getId(meta.id)), dep.id);
+							var path = getId(nid);
+							metas[idx] = {
+								id:nid,
+								uri:path
+							};
+						});
+						Loader.push(metas);
+						delayMetas = [];
+					}
 					if(callback){
 						callback.call(this, url);
 					}
@@ -291,10 +303,10 @@
         ids = ids.concat(nfe.config.preload);
         var metas = [];
         for(var i=0; i<ids.length; i++){
-            //ids[i] = getId(ids[i]);
+            var path = getId(ids[i]);
             metas[i] = {
                 id:ids[i],
-                status:State.READY
+				uri:path
             };
         }
         //ids = transferIds(nfe.config.base, ids);
@@ -305,47 +317,87 @@
 	function require(id, base){
         var nid = id;
         if(typeof base !== 'undefined'){
+			//var root = getId(base);
             nid = uri.join(uri.dirname(base), nid);
         }
+		nid = getId(nid);
         
         var meta = nfe.cache[nid];
         if(typeof meta === 'undefined'){
-            throw new Error('Not find Module: ' + nid);
+            throw new Error('Not find Module: ' + id);
         }
-        var factory = meta.factory;
 
-        nid = getId(nid);
 		var url = getURI(nid);
-		var module = {
-            id:nid,
-            uri:url
-        };
-        debug(3, '[require] url: ' + url);
-		module.exports = {};
-        
-        if(typeof factory === 'function'){
-            var r = function(iid){
-                return require(iid, id);
-            };
-            r.async = function(ids, callback){
-                nfe.use(ids, callback);
-            };
-            var result = factory.call(this, r, module.exports, module);
-            debug(4, module);
-            if(typeof result === 'undefined'){
-                return module.exports;
-            }else{
-                return result;
-            }
-        }
+		debug(3, '[require] url: ' + url);
+		if(typeof meta.exports !== 'undefined'){
+			return meta.exports;
+		}else{
+			var factory = meta.factory;
+
+			var module = {
+				id:nid,
+				uri:url
+			};
+			module.exports = {};
+
+			var parentId = id;
+			if(meta.anonymous || id.indexOf('.') === 0){
+				parentId = nid;
+			}
+			
+			if(typeof factory === 'function'){
+				var r = function(iid){
+					return require(iid, parentId);
+				};
+				r.async = function(ids, callback){
+					nfe.use(ids, callback);
+				};
+				var result = factory.call(global, r, module.exports, module);
+				debug(4, module);
+				if(typeof result === 'undefined'){
+					meta.exports = module.exports;
+					return module.exports;
+				}else{
+					meta.exports = result;
+					return result;
+				}
+			}
+		}
+	}
+
+	var REQUIRE_RE = /"(?:\\"|[^"])*"|'(?:\\'|[^'])*'|\/\*[\S\s]*?\*\/|\/(?:\\\/|[^\/\r\n])+\/(?=[^\/])|\/\/.*|\.\s*require|(?:^|[^$])\brequire\s*\(\s*(["'])(.+?)\1\s*\)/g
+	var SLASH_RE = /\\\\/g
+
+	function parseDependencies(code) {
+	  var ret = []
+
+	  code.replace(SLASH_RE, "")
+		  .replace(REQUIRE_RE, function(m, m1, m2) {
+			if (m2) {
+			  ret.push(m2)
+			}
+		  })
+
+	  return ret
 	}
 
 	function define(id, deps, factory){
         if(arguments.length == 1){
             factory = id;
-            deps = [];
+			//分析依赖
+			deps = parseDependencies(factory.toString());
             id = undefined;
-        }
+        }else if(arguments.length == 2){
+			factory = deps;
+			if(util.isArray(id)){
+				deps = id;
+				id = undefined;
+			}else{
+				id = id;
+				//分析依赖
+				deps = parseDependencies(factory.toString());
+			}
+		}
 		//var module = {};
 		//factory.apply(this, require, module.exports, module);
         //id = getId(id);
@@ -353,19 +405,41 @@
         if(deps.length > 0){
             var metas = [];
             for(var i=0; i<deps.length; i++){
-                metas[i] = {
-                    id:uri.join(uri.dirname(id), deps[i]),
-                    status:State.READY
-                };
+				/*
+				if(id !== undefined){
+					var nid = getId(id);
+					var dir = uri.dirname(nid);
+					var dep = deps[i];
+					var url = uri.join(dir, dep);
+					console.log('id: ' + id + ',nid: ' + nid + ', dir: ' + dir + ', dep: ' + dep + ', url: ' + url);
+				}
+				*/
+				var nid, path;
+				if(id === undefined){
+					nid = deps[i];
+				}else{
+					nid = uri.join(uri.dirname(id), deps[i]);
+					path = getId(nid);
+				}
+				metas[i] = {
+					id:nid,
+					uri:path
+				};
             }
-		    Loader.push(metas);
+			// 如果id不存在，则延迟处理，到onload中
+			if(id !== undefined){
+		    	Loader.push(metas);
+			}else{
+				delayMetas = metas;
+			}
         }
         var meta = {
             id:id,
-            factory:factory
+            factory:factory,
+			anonymous:id === undefined
         };
         if(id !== undefined){   
-            save(id, meta);
+            save(getId(id), meta);
         }else{
             anonymousMeta = meta;
         }
@@ -414,16 +488,23 @@
 		}
 	};
 
+	define.cmd = {};
 	global.nfe = nfe;
 	global.define = define;
 
+	global._require = require;
 
-    var level = 0;
+
+    var level = 5;
     function debug(lv, msg){
         if(lv < level){
             var d = new Date();
-            console.log(d.getTime() + ' - ');
-            console.log(msg);
+            //console.log(d.getTime() + ' - ');
+			if(util.isString(msg)){
+            	console.log(msg + ' - ' + d.getTime());
+			}else{
+				console.log(msg);
+			}
         }
     }
 })(this, undefined);
