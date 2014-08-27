@@ -1,0 +1,61 @@
+.pagerDiv{
+	font-size:12px;
+}
+.pagerDiv span{
+	margin:10px 0 50px;
+	padding:5px;
+}
+ul.pages {
+    display:block;
+    border:none;
+    text-transform:uppercase;
+    font-size:12px !important;
+    padding:0;
+    float:right; 
+    margin:2px;
+}
+ul.pages li {
+    list-style:none;
+    float:left;
+    text-decoration:none;
+    cursor:pointer;
+	-moz-user-select:none;
+	
+	padding:2px 5px;
+    border:1px solid #CCCCCC;
+	margin:0 2px;
+	zoom:1;
+	vertical-align:middle;
+	line-height:16px;
+	background:url(images/curpage.png) repeat-x;
+}
+ul.pages li:hover {
+	background:#eeeeee;
+	text-decoration: none;
+}
+ul.pages li.pgEmpty {
+    border:1px solid #CCCCCC;
+    color:#CCCCCC;
+    cursor:default;
+}
+ul.pages li.pgEmpty:hover{
+	background:url(images/curpage.png) repeat-x;
+}
+ul.pages li.pgCurrent {
+	border-color:#FF6464;
+	background:#FAADAD;
+	color:#fff;
+	cursor:default;
+}
+ul.pages li.pgTotal {
+    border:0;
+    color:#000;
+    cursor:default;
+    background:none;
+}
+.crud{
+	display: none;
+}
+.crud_active{
+	display: block;
+}

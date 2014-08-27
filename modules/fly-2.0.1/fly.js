@@ -286,7 +286,7 @@ define("fly", ["jquery"], function(require, exports, module){
          * @param {Object}opts.data         发送的参数
          * @param {Function}opts.success    成功后的回调函数
          * @param {Function}opts.error      失败后的回调函数
-         * @param ... 						其他参考jQuery的ajax配置参数
+         * @param ... 						其���参考jQuery的ajax配置参数
          */
         fly.get = function(url, opts) {
             fly.ajax(fly.extend(opts, {
@@ -312,10 +312,10 @@ define("fly", ["jquery"], function(require, exports, module){
          * @param {DOM} 		context 	作用域
          */
         fly.live = function(selector, eventName, method, context) {
-            jQuery(selector, context).live(eventName, method);
+            context.on(eventName, selector, method);
         };
         fly.die = function(selector,eventName,context){
-            jQuery(selector,context).die(eventName);
+            jQuery(selector,context).off(eventName);
         };
         fly.g = function(id, context) {
             return jQuery("#" + id, context);
@@ -453,7 +453,7 @@ define("fly", ["jquery"], function(require, exports, module){
                 save : function(url, opts) {
                     var me = this;
                     var opts = fly.extend({
-                        //这里是默认配置
+                        //���里是默认配置
                     }, opts);
                     function realFun(opts) {
                         var fun = opts.success;
@@ -466,7 +466,7 @@ define("fly", ["jquery"], function(require, exports, module){
                     fly.post(url, opts);
                 },
                 /**
-                 * 修改属性时触发
+                 * 修���属性时触发
                  * @param {String}attr		change的字段
                  * @param {Object}oldValue	旧值
                  * @param {Object}newValue	新值
@@ -479,7 +479,7 @@ define("fly", ["jquery"], function(require, exports, module){
             },
             /**
              * 创建构造函数
-             * @param {Function} constructor	构造函数
+             * @param {Function} constructor	���造函数
              * @param {Object} attr				原型方法,默认属性
              * @return Function(Class)
              */
@@ -612,7 +612,7 @@ define("fly", ["jquery"], function(require, exports, module){
             /**
              * 模块注册
              * @param {String} name 模块名称或命名空间
-             * @param {String} path 当type=="url"时，表示模块路径，当type=="script"时，表示节点ID，否则为模块内容
+             * @param {String} path 当type=="url"时，表示模块路径，当type=="script"时，表示节点ID，否则为模���内容
              * @param {String} type 模块类型（可选）url/script
              */
             add : function(name, path, type) {
@@ -706,7 +706,7 @@ define("fly", ["jquery"], function(require, exports, module){
                 return ret;
             },
             /**
-             * 模版格式化
+             * 模版格���化
              * @param {String}name	Modules name
              * @param {Object}data	待填充数据
              */
@@ -752,7 +752,7 @@ define("fly", ["jquery"], function(require, exports, module){
              * 模版引擎
              * 参考：underscore.js
              * @param {String} str      目标字符串
-             * @param {Object} data     填充数据(可选)
+             * @param {Object} data     填���数据(可选)
              */
             template : function(str, data) {
                 if( typeof fly.Template._tpls[str] != "undefined") {
@@ -822,7 +822,7 @@ define("fly", ["jquery"], function(require, exports, module){
                 nl2br : function(v) {
                     return v.replace(/\n/g, "<br/>");
                 },
-                //为目标字符串添加wbr软换行
+                //为目标���符串添加wbr软换行
                 wbr : function(v) {
                     return v.replace(/(?:<[^>]+>)|(?:&#?[0-9a-z]{2,6};)|(.{1})/gi, '$&<wbr>').replace(/><wbr>/g, '>');
                 },

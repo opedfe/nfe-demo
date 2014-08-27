@@ -2,4 +2,4 @@
 
 
 rm -rf output
-nfe release -comp -d ./output
+../nfe/bin/nfe release -cp -d ./output

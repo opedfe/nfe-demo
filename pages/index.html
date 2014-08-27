@@ -10,6 +10,7 @@
 	try{document.execCommand("BackgroundImageCache", false, true);}catch(e){}
 	</script>
     <link rel="stylesheet" type='text/css' href="common/common.less"/>
+    <script src="../libs/sea.js"></script>
     <script src="../libs/nfe.js"></script>
 </head>
 <body class='action'>
@@ -20,6 +21,7 @@
 <a href="#!/alarm/action~value=mfylee">alarm</a>
 <div id="main">
 main
+<div id='taginput' style='border:1px solid #ddd;'></div>
 </div>
 <footer>baidu.com</footer>
 <script>
@@ -46,18 +48,41 @@ function defineCss(id, content){
     document.head.apendChild(style);
     style.appendChild(document.createTextNode(content));
 }
-seajs.use('action/index', function(a){
-    a.init();
-});
-*/
-nfe.setConfig({
-    base:"/static/js/",
-    preload:['jquery']
-});
-nfe.use(['action/index', 'action/index.css'], function(a){
+nfe.use('action/index', function(a){
     a.init();
 });
 
+seajs.config({
+    base:"/static/js/",
+	alias:nfe.config.alias,
+	paths:{
+		"^/static/modules/(.+?)$": "/static/modules/$1"
+	},
+    preload:['jquery']
+});
+var start = (new Date).getTime();
+seajs.use(['action/index', 'action/index.css'], function(a){
+    //a.init();
+	var end = (new Date).getTime();
+	console.log(end-start);
+});
+*/
+
+/*
+*/
+nfe.setConfig({
+    base:"/static/js/",
+	paths:{
+		"^/static/modules/(.+?)$": "/static/modules/$1"
+	},
+    preload:['jquery']
+});
+var start = (new Date).getTime();
+nfe.use(['action/index', 'action/index.css'], function(a){
+    a.init();
+	var end = (new Date).getTime();
+	console.log(end-start);
+});
 </script>
 </body>
 </html>
