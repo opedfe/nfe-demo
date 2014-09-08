@@ -10,7 +10,9 @@
 	try{document.execCommand("BackgroundImageCache", false, true);}catch(e){}
 	</script>
     <link rel="stylesheet" type='text/css' href="common/common.less"/>
+	<!--
     <script src="../libs/sea.js"></script>
+	-->
     <script src="../libs/nfe.js"></script>
 </head>
 <body class='action'>
@@ -23,7 +25,7 @@
 main
 <div id='taginput' style='border:1px solid #ddd;'></div>
 </div>
-<footer>baidu.com</footer>
+<link rel="import" href="./common/footer.html?__inline"/>
 <script>
 /**
  * seajs配置信息
@@ -61,13 +63,13 @@ seajs.config({
     preload:['jquery']
 });
 var start = (new Date).getTime();
-seajs.use(['action/index', 'action/index.css'], function(a){
-    //a.init();
+seajs.use(['action/index'], function(a){
+    a.init();
 	var end = (new Date).getTime();
 	console.log(end-start);
 });
-*/
 
+*/
 /*
 */
 nfe.setConfig({

@@ -1,8 +1,9 @@
 
-    var view = require('./view');
-    view = require('./view');
+    var view = require(__uri('./view'));
+    view = require('./view?__inline');
 
-	var fly = require('nuit/taginput/taginput');
+	var fly = require('fly');
+	var nuit = require('nuit');
 
     var model = require('./model');
 
@@ -25,7 +26,8 @@
 		console.log('-------');
 		console.log(JSON.stringify(module));
 		console.log('-------');
-		new fly.ui.Taginput({
+		console.log(nuit);
+		new nuit.ui.Taginput({
 			el:$('#taginput')
 		});
     };
