@@ -11,8 +11,8 @@
 	</script>
     <link rel="stylesheet" type='text/css' href="common/common.less"/>
 	<!--
-    <script src="../libs/sea.js"></script>
 	-->
+    <script src="../libs/sea.js"></script>
     <script src="../libs/nfe.js"></script>
 </head>
 <body class='action'>
@@ -68,11 +68,12 @@ seajs.use(['action/index'], function(a){
 	var end = (new Date).getTime();
 	console.log(end-start);
 });
-
 */
+
 /*
 */
 nfe.setConfig({
+	debug:true,
     base:"/static/js/",
 	paths:{
 		"^/static/modules/(.+?)$": "/static/modules/$1"
@@ -85,6 +86,11 @@ nfe.use(['action/index', 'action/index.css'], function(a){
 	var end = (new Date).getTime();
 	console.log(end-start);
 });
+/**
+nfe.use(['nuit'], function(){
+	console.log(arguments);
+});
+*/
 </script>
 </body>
 </html>

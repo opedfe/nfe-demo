@@ -3,15 +3,15 @@
  *
  *
  */
-define(function(require,exports,module){
+define('nuit', ['nuit/combox/combox', 'nuit/taginput/taginput', 'nuit/pager/pager', 'nuit/dialog/dialog'], function(require,exports,module){
 
 	var fly = require('fly');
 	fly.ui = fly.ui || {};
 
-	require('combox/combox.js');
-	require('taginput/taginput.js');
-	require('pager/pager.js');
-	require('dialog/dialog.js');
+	require('nuit/combox/combox');
+	require('nuit/taginput/taginput');
+	require('nuit/pager/pager');
+	require('nuit/dialog/dialog');
 
 	return fly;
 });

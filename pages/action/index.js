@@ -9,7 +9,7 @@
 
     var $ = require('jquery');
 
-    var echarts = require('echarts');
+    //var echarts = require('echarts');
 
     //require.async('action/test.css');
 
@@ -21,7 +21,7 @@
 
         console.log($);
 
-        console.log(echarts);
+        //console.log(echarts);
 
 		console.log('-------');
 		console.log(JSON.stringify(module));

@@ -84,7 +84,7 @@ define("nuit/dialog/dialog", ["jquery", "fly", "./dialog.css"], function(require
 
 		}, {
 			uiType : "dialog",
-			once : true, //是否���一次性弹出层
+			once : true, //是否为一次性弹出层
 			zIndex : 9999,
 			buttons:[],
 			escClose:true,
